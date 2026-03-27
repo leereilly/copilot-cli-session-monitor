@@ -1,13 +1,13 @@
 # Copilot CLI Session Monitor
 
-A lightweight macOS menu bar app that shows your active [GitHub Copilot CLI](https://github.com/features/copilot/cli) sessions at a glance. Click any session to jump straight to its Terminal.app tab.
+A lightweight macOS menu bar app that shows your active [GitHub Copilot CLI](https://github.com/features/copilot/cli) sessions at a glance. Click any session to jump straight to its terminal tab.
 
 ![Copilot CLI Session Monitor](assets/copilot-cli-session-monitor-screenshot.png)
 
 ## Features
 
 - 🖥️ **Live session list** — see all active Copilot CLI sessions in your menu bar
-- 🖱️ **One-click tab switching** — click a session to focus its Terminal.app tab
+- 🖱️ **One-click tab switching** — click a session to focus its terminal tab
 - 🔄 **Auto-refresh** — updates every 30 seconds automatically
 - 📁 **Directory context** — shows the working directory for each session
 - 🪶 **Lightweight** — single binary, no dock icon, reads local files only (no network)
@@ -110,7 +110,23 @@ Click the icon to see:
 Quit
 ```
 
-**Click any session name** to switch to its Terminal.app tab.
+**Click any session name** to switch to its terminal tab.
+
+### Terminal Compatibility
+
+Session detection works with **any terminal** — it reads from Copilot CLI's local files, not the terminal itself. Tab switching currently supports macOS default terminal only.
+
+| Terminal | Session list | Active/idle status | Click to switch tab |
+|----------|:---:|:---:|:---:|
+| **macOS default terminal** | ✅ | ✅ | ✅ |
+| **iTerm2** | ✅ | ✅ | ❌ Not yet |
+| **Warp** | ✅ | ✅ | ❌ Not yet |
+| **Kitty** | ✅ | ✅ | ❌ Not yet |
+| **Alacritty** | ✅ | ✅ | ❌ Not yet |
+| **tmux** | ✅ | ✅ | ❌ Not yet |
+| **VS Code terminal** | ✅ | ✅ | ❌ Not yet |
+
+> **Want support for your terminal?** Contributions welcome — see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ### macOS Permissions
 
