@@ -6,7 +6,7 @@ A lightweight macOS menu bar app that shows your active [GitHub Copilot CLI](htt
 
 ## Features
 
-- 🟢 **Live session list** — see all active Copilot CLI sessions in your menu bar
+- 🖥️ **Live session list** — see all active Copilot CLI sessions in your menu bar
 - 🖱️ **One-click tab switching** — click a session to focus its Terminal.app tab
 - 🔄 **Auto-refresh** — updates every 30 seconds automatically
 - 📁 **Directory context** — shows the working directory for each session
@@ -71,10 +71,10 @@ make build
 
 ## Usage
 
-Once running, you'll see a small circle icon in your macOS menu bar:
+Once running, you'll see a small terminal icon in your macOS menu bar:
 
-- **🟢 Green** — at least one Copilot session is active
-- **⚫ Gray** — no active sessions
+- **Solid** — at least one Copilot session is active
+- **Faded** — no active sessions
 
 Click the icon to see:
 
