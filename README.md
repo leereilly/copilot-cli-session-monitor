@@ -2,7 +2,7 @@
 
 A lightweight macOS menu bar app that shows your active [GitHub Copilot CLI](https://github.com/features/copilot/cli) sessions at a glance. Click any session to jump straight to its Terminal.app tab.
 
-![menu bar screenshot placeholder](assets/screenshot.png)
+![Copilot CLI Session Monitor](assets/copilot-cli-session-monitor-screenshot.png)
 
 ## Features
 
