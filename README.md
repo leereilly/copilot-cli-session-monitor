@@ -1,0 +1,188 @@
+# Copilot CLI Session Monitor
+
+A lightweight macOS menu bar app that shows your active [GitHub Copilot CLI](https://githubnext.com/projects/copilot-cli) sessions at a glance. Click any session to jump straight to its Terminal.app tab.
+
+![menu bar screenshot placeholder](assets/screenshot.png)
+
+## Features
+
+- 🟢 **Live session list** — see all active Copilot CLI sessions in your menu bar
+- 🖱️ **One-click tab switching** — click a session to focus its Terminal.app tab
+- 🔄 **Auto-refresh** — updates every 30 seconds automatically
+- 📁 **Directory context** — shows the working directory for each session
+- 🪶 **Lightweight** — single binary, no dock icon, reads local files only (no network)
+
+## How It Works
+
+Copilot CLI stores session metadata locally. This app reads two sources:
+
+1. **`~/.copilot/session-store.db`** — SQLite database with session names, directories, and timestamps
+2. **`~/.copilot/session-state/*/inuse.*.lock`** — lock files that indicate which sessions have a live process
+
+The app cross-references lock file PIDs with running processes to determine which sessions are active, then displays them in a native macOS menu bar dropdown.
+
+> **Note:** This app is read-only — it never modifies any Copilot files.
+
+## Prerequisites
+
+- **macOS 13 (Ventura)** or later
+- **Go 1.21+** (for building from source)
+- **GitHub Copilot CLI** installed and used at least once (so `~/.copilot/` exists)
+
+## Quick Start
+
+```bash
+git clone https://github.com/liamhampton/copilot-session-monitor.git
+cd copilot-session-monitor
+make bundle
+open 'Copilot CLI Session Monitor.app'
+```
+
+## Installation
+
+### Option 1: Install to Applications (recommended)
+
+Build the `.app` bundle and copy it to `/Applications`:
+
+```bash
+make install
+```
+
+Then launch from Spotlight or Finder: search for **"Copilot CLI Session Monitor"**.
+
+### Option 2: Run from source
+
+Build and run the binary directly (useful for development):
+
+```bash
+make run
+```
+
+### Option 3: Build only
+
+Compile the binary without creating an `.app` bundle:
+
+```bash
+make build
+./copilot-monitor
+```
+
+> **Note:** Running the bare binary works, but macOS requires a `.app` bundle for the menu bar icon to render reliably. Use `make bundle` or `make install` for the best experience.
+
+## Usage
+
+Once running, you'll see a small circle icon in your macOS menu bar:
+
+- **🟢 Green** — at least one Copilot session is active
+- **⚫ Gray** — no active sessions
+
+Click the icon to see:
+
+```
+● Plan Terminal Session Sidebar
+  ~/Documents/github/agent-controller
+
+● Azure VS Code Changelog Calendar
+  ~/Documents/github/everything-vs-code-shipped
+
+● product-store-demo
+  ~/Documents/github/product-store-demo
+
+──────────────────────────
+3 active · 13:25
+──────────────────────────
+Quit
+```
+
+**Click any session name** to switch to its Terminal.app tab.
+
+### macOS Permissions
+
+On first launch, macOS will ask for **Automation** permission to control Terminal.app. This is required for the tab-switching feature. Grant it in:
+
+**System Settings → Privacy & Security → Automation → Copilot CLI Session Monitor → Terminal**
+
+## Uninstall
+
+### If installed to /Applications:
+
+```bash
+make uninstall
+```
+
+Or manually delete:
+
+```bash
+rm -rf '/Applications/Copilot CLI Session Monitor.app'
+```
+
+### Remove all traces:
+
+The app itself stores no data. To fully clean up:
+
+```bash
+# Remove the app
+rm -rf '/Applications/Copilot CLI Session Monitor.app'
+
+# Remove build artifacts (if in the project directory)
+make clean
+```
+
+> **Note:** This does **not** touch your `~/.copilot/` directory — that belongs to GitHub Copilot CLI.
+
+## Development
+
+### Project Structure
+
+```
+copilot-session-monitor/
+├── main.go                      # Entry point — systray.Run()
+├── internal/
+│   ├── session/
+│   │   ├── types.go             # CopilotSession struct
+│   │   └── reader.go            # SQLite + lock file reader
+│   ├── menu/
+│   │   └── builder.go           # Systray menu construction
+│   ├── monitor/
+│   │   └── monitor.go           # Refresh timer orchestration
+│   └── terminal/
+│       └── focus.go             # Terminal.app tab switching (AppleScript)
+├── assets/
+│   ├── icon-active.png          # Green menu bar icon
+│   └── icon-idle.png            # Gray menu bar icon
+├── bundle/
+│   └── Info.plist               # macOS app bundle metadata
+├── Makefile                     # Build, bundle, install targets
+├── go.mod
+└── go.sum
+```
+
+### Make Targets
+
+| Target | Description |
+|--------|-------------|
+| `make build` | Compile the Go binary |
+| `make bundle` | Build + package as `Copilot CLI Session Monitor.app` |
+| `make install` | Build + bundle + copy to `/Applications` |
+| `make uninstall` | Remove from `/Applications` |
+| `make run` | Build and run directly (for development) |
+| `make clean` | Remove build artifacts |
+
+### Key Design Decisions
+
+- **Read-only** — never writes to Copilot's files
+- **Pure Go SQLite** (`modernc.org/sqlite`) — no CGo dependency for database access
+- **Goroutine-safe** — cancel pattern prevents leaked goroutines on menu refresh
+- **Persistent DB connection** — opened once, reused across refreshes
+- **Efficient queries** — scans lock files first, then queries only active session IDs
+
+## Tech Stack
+
+- [Go](https://go.dev/) — application language
+- [fyne.io/systray](https://pkg.go.dev/fyne.io/systray) — cross-platform system tray
+- [modernc.org/sqlite](https://pkg.go.dev/modernc.org/sqlite) — pure Go SQLite driver
+- AppleScript — Terminal.app tab switching
+
+## Contributing
+
+Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) and open an issue first to discuss what you'd like to change.

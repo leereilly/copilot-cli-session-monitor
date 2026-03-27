@@ -1,0 +1,23 @@
+# Build artifacts
+copilot-monitor
+Copilot CLI Session Monitor.app/
+
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+._*
